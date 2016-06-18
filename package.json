@@ -4,7 +4,7 @@
   "description": "Functional lib and examples in ES6",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "playground" : "babel-node functional-playground/play.js --presets es2015-node5"
   },
   "author": "Anto Aravinth <anto.aravinth.cse@gmail.com>",
   "license": "ISC",
