@@ -1,98 +1,101 @@
-import {arrayUtils,partial,composeN,pipe} from '../lib/es6-functional.js'
+import {Container,MayBe,arrayUtils,Some,Nothing} from '../lib/es6-functional.js'
+var request = require('sync-request');
 
-let map = arrayUtils.map;
-let filter = arrayUtils.filter;
+//using bare new keyword
+console.log("Container using bare new keyword")
+let testValue = new Container(3)
+console.log("Value inside container",testValue)
 
-let apressBooks = [
-    {
-        "id": 111,
-        "title": "C# 6.0",
-        "author": "ANDREW TROELSEN",
-        "rating": [4.7],
-        "reviews": [{good : 4 , excellent : 12}]
-    },
-    {
-        "id": 222,
-        "title": "Efficient Learning Machines",
-        "author": "Rahul Khanna",
-        "rating": [4.5],
-        "reviews": []
-    },
-    {
-        "id": 333,
-        "title": "Pro AngularJS",
-        "author": "Adam Freeman",
-        "rating": [4.0],
-        "reviews": []
-    },
-    {
-        "id": 444,
-        "title": "Pro ASP.NET",
-        "author": "Adam Freeman",
-        "rating": [4.2],
-        "reviews": [{good : 14 , excellent : 12}]
+let testObj = new Container({a:1})
+console.log("Object inside container",testObj)
+
+let testArray = new Container([1,2])
+console.log("Array inside container",testArray)
+
+//using `of` method
+console.log("\n\nContainer using `of` util method")
+testValue = Container.of(3)
+console.log("Value inside container",testValue)
+
+testObj = Container.of({a:1})
+console.log("Object inside container",testObj)
+
+testArray = Container.of([1,2])
+console.log("Array inside container",testArray)
+
+console.log("Nested conatiner",Container.of(Container.of(3)))
+
+let double = (x) => x + x;
+console.log("Double container",Container.of(3).map(double));
+
+
+console.log("May Be Example",MayBe.of("string").map((x) => x.toUpperCase()))
+console.log("May Be null example",MayBe.of(null).map((x) => x.toUpperCase()))
+console.log("MayBe chaining",MayBe.of("George")
+     .map((x) => x.toUpperCase())
+     .map((x) => "Mr. " + x))
+
+console.log("MayBe chaining null",
+    MayBe.of("George")
+     .map(() => undefined)
+     .map((x) => "Mr. " + x))
+
+let getTopTenSubRedditPosts = (type) => {
+
+    let response  
+    try{
+       response = JSON.parse(request('GET',"https://www.reddit.com/r/subreddits/" + type + ".json?limit=10").getBody('utf8'))
+    }catch(err) {
+        response = { message: "Something went wrong" , errorCode: err['statusCode'] }
     }
-];
-
-console.log("Query result",map(filter(apressBooks, (book) => book.rating[0] > 4.5),(book) => {
-    return {title: book.title,author:book.author}
-}))
-
-var compose = (a, b) =>
-  (c) => a(b(c))
-
-let number = compose(Math.round,parseFloat)
-console.log("Number is ",number("3.56"))
-
-let splitIntoSpaces = (str) => str.split(" ");
-let count = (array) => array.length;
-
-//count words via compose
-const countWords = compose(count,splitIntoSpaces);
-console.log("Counting words for",countWords("hello your reading about composition"));
-
-//util functions
-let filterOutStandingBooks = (book) => book.rating[0] === 5;
-let filterGoodBooks = (book) =>  book.rating[0] > 4.5;
-let filterBadBooks = (book) => book.rating[0] < 3.5;
-
-let projectTitleAndAuthor = (book) => { return {title: book.title,author:book.author} }
-let projectAuthor = (book) => { return {author:book.author}  }
-let projectTitle = (book) => { return {title: book.title} }
-
-//compose new function. 
-let queryGoodBooks = partial(filter,undefined,filterGoodBooks);
-let mapTitleAndAuthor = partial(map,undefined,projectTitleAndAuthor)
-
-let titleAndAuthorForGoodBooks = compose(mapTitleAndAuthor,queryGoodBooks)
-// console.log("Good book title and author via compose",titleAndAuthorForGoodBooks(apressBooks))
-
-//compose other new functions
-let mapTitle = partial(map,undefined,projectTitle)
-let titleForGoodBooks = compose(mapTitle,queryGoodBooks)
-
-//console.log("Good book title",titleForGoodBooks(apressBooks))
-
-//composeN many functions
-let oddOrEven = (ip) => ip % 2 == 0 ? "even" : "odd"
-var oddOrEvenWords = composeN(oddOrEven,count,splitIntoSpaces);
-console.log("Even or odd via compose ?",oddOrEvenWords("hello your reading about composition"))
-
-//using pipes as data flow
-oddOrEvenWords = pipe(splitIntoSpaces,count,oddOrEven);
-console.log("Even or odd via pipe ?",oddOrEvenWords("hello your reading about composition"))
-
-let associativeCheckL = composeN(composeN(oddOrEven,count),splitIntoSpaces)
-console.log("Associative check L",associativeCheckL("hello your reading about composition"))
-
-let associativeCheckR = composeN(oddOrEven,composeN(count,splitIntoSpaces))
-console.log("Associative check R",associativeCheckR("hello your reading about composition"))
-
-//identity function!
-const identity = (it) => { 
-  console.log(it); 
-  return it 
+    return response
 }
 
-console.log("Debugging",compose(oddOrEven,count,identity,splitIntoSpaces)("Test string"))
+let getTopTenSubRedditData = (type) => {
+    let response = getTopTenSubRedditPosts(type);
+    return MayBe.of(response).map((arr) => arr['data'])
+                             .map((arr) => arr['children'])
+                             .map((arr) => arrayUtils.map(arr,
+                                (x) => { 
+                                    return {
+                                        title : x['data'].title,
+                                        url   : x['data'].url
+                                    } 
+                                }
+                            ))
+}
 
+console.log("Proper reddit type",getTopTenSubRedditData('new'))
+console.log("Wrong reddit type",getTopTenSubRedditData('neww'))
+
+console.log("\nEither example\n")
+console.log("Something example", Some.of("test").map((x) => x.toUpperCase()))
+console.log("Nothing example", Nothing.of("test").map((x) => x.toUpperCase()))
+
+let getTopTenSubRedditPostsEither = (type) => {
+
+    let response  
+    try{
+       response = Some.of(JSON.parse(request('GET',"https://www.reddit.com/r/subreddits/" + type + ".json?limit=10").getBody('utf8')))
+    }catch(err) {
+        response = Nothing.of({ message: "Something went wrong" , errorCode: err['statusCode'] })
+    }
+    return response
+}
+
+let getTopTenSubRedditDataEither = (type) => {
+    let response = getTopTenSubRedditPostsEither(type);
+    return response.map((arr) => arr['data'])
+                             .map((arr) => arr['children'])
+                             .map((arr) => arrayUtils.map(arr,
+                                (x) => { 
+                                    return {
+                                        title : x['data'].title,
+                                        url   : x['data'].url
+                                    } 
+                                }
+                            ))
+}
+
+console.log("Correct reddit type ",getTopTenSubRedditDataEither('new'))
+console.log("Wrong reddit type ",getTopTenSubRedditDataEither('new2'))
