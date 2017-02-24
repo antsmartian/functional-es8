@@ -1,5 +1,6 @@
-import {forEach,forEachObject,unless,times,sortBy,every,some} from '../lib/es6-functional.js'
+import {forEach,forEachObject,unless,times,sortBy,every,some,tap,unary,once,memoized} from '../lib/es6-functional.js'
 
+/*
 let object = {a:1,b:2}
 //Print the object key and value
 forEachObject(object, (k,v) => console.log(k + ":" + v))
@@ -41,5 +42,54 @@ console.log("Firstname using sortBy hoc",people.sort(sortBy("firstname")))
 
 //sorting with respect to firstname using sortBy
 console.log("lastName using sortBy hoc",people.sort(sortBy("lastname")))
+*/
+
+forEach([1,2,3],(a) => 
+   tap(a)(() => 
+     { 
+       console.log(a) 
+     }
+   )
+)
 
 
+//parseInt doesnt work in node
+//http://stackoverflow.com/questions/16880327/why-am-i-getting-weird-result-using-parseint-in-node-js-different-result-from
+//['1', '2', '3'].map(unary(parseInt))
+
+var doPayment = once(() => {
+   console.log("Payment is done")
+})
+
+//this should work
+doPayment()
+
+//oops bad, we are doing second time!
+doPayment()
+
+//slow factorial
+var factorial = (n) => {
+  if (n === 0) {
+    return 1;
+  }
+  
+  // This is it! Recursion!!
+  return n * factorial(n - 1);
+}
+
+console.log("Factorial of 2 is",factorial(2))
+console.log("Factorial of 3 is",factorial(3))
+
+//memoized factorial
+let fastFactorial = memoized((n) => {
+  if (n === 0) {
+    return 1;
+  }
+  
+  // This is it! Recursion!!
+  return n * fastFactorial(n - 1);
+})
+
+console.log("Fast Factorial of 2 is",fastFactorial(2))
+console.log("Fast Factorial of 3 is",fastFactorial(3))
+console.log("Fast Factorial of 7 is",fastFactorial(7))
