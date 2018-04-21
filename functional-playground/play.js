@@ -82,10 +82,10 @@ console.log("Even or odd via compose ?",oddOrEvenWords("hello your reading about
 oddOrEvenWords = pipe(splitIntoSpaces,count,oddOrEven);
 console.log("Even or odd via pipe ?",oddOrEvenWords("hello your reading about composition"))
 
-let associativeCheckL = composeN(composeN(oddOrEven,count),splitIntoSpaces)
+let associativeCheckL = compose(compose(oddOrEven,count),splitIntoSpaces)
 console.log("Associative check L",associativeCheckL("hello your reading about composition"))
 
-let associativeCheckR = composeN(oddOrEven,composeN(count,splitIntoSpaces))
+let associativeCheckR = compose(oddOrEven,compose(count,splitIntoSpaces))
 console.log("Associative check R",associativeCheckR("hello your reading about composition"))
 
 //identity function!
