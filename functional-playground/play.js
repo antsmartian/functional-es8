@@ -1,5 +1,5 @@
-import {Container,MayBe,arrayUtils,Some,Nothing} from '../lib/es6-functional.js'
-
+import { Container, MayBe, arrayUtils, Some, Nothing } from '../lib/es6-functional.js'
+const fetch = require('node-fetch');
 let https = require('https');
 
 function* gen() {
@@ -135,8 +135,83 @@ function request(url) {
 function *main() {
     let picturesJson = yield request( "https://www.reddit.com/r/pics/.json" );
     let firstPictureData = yield request(picturesJson.data.children[0].data.url+".json")
-    console.log(firstPictureData)
 }
 
 generator = main()
 generator.next()
+
+/**************************************************************************************************************************************************** */
+Promise Examples
+let grade = "A+";
+let examResults = new Promise(
+    function (resolve, reject) {
+        if (grade == "A+")
+            resolve("You will get an XBOX");
+        else
+            reject("Better luck next time");
+    }
+);
+
+let conductExams = () => {
+    examResults
+        .then(x => console.log(x)) // captures resolve and logs "You will get an XBOX"
+        .catch(x => console.error(x)); // captures rejection and logs "Better luck next time"
+};
+
+conductExams();
+
+// /**************************************************************************************************************************************************** */
+// Simple Async / Await example using Promise
+function fetchTextByPromise() {
+    return new Promise(resolve => {
+        setTimeout(() => {
+            resolve("es8");
+        }, 2000);
+    });
+}
+
+let sayHello = async () => {
+    const externalFetchedText = await fetchTextByPromise();
+    console.log(`Response from SayHello: Hello, ${externalFetchedText}`); // Hello, es8
+}
+
+console.log("Before Calling SayHello");
+sayHello(); // this returns after 2 seconds
+console.log("After Calling SayHello"); // this will be printed before SayHello, because SayHello is a non blocking call
+
+/**************************************************************************************************************************************************** */
+// Simple Async / Await example using Remote API Call
+
+// returns a promise
+const getAsync = (url) => {
+    return fetch(url)
+        .then(x => x)
+        .catch(x =>
+            console.log("Error in getAsync:" + x)
+        );
+}
+
+// 'async' con only be used in functions where 'await' is used
+async function getAsyncCaller() {
+    try {
+        // https://jsonplaceholder.typicode.com/users is a sample API which returns a JSON Array of dummy users
+        const response = await getAsync("https://jsonplaceholder.typicode.com/users"); // pause until promise completes
+        const result = await response.json(); //removing .json here demonstrates the error handling in promises
+        console.log("GetAsync fetched " + result.length + " results");
+        return result;
+    } catch (error) {
+        await Promise.reject("Error in getAsyncCaller:" + error.message);
+    }
+}
+
+getAsyncCaller()
+    .then(async (x) => {
+        console.log("Call to GetAsync function completed");
+        const website = await getAsync("http://" + x[0].website);
+        console.log("The website (http://" + x[0].website + ") content length is " + website.toString().length + " bytes");
+    })
+    .catch(x => console.log("Error: " + x)); // Promise.Reject is caught here, the error message can be used to perform custom error handling
+
+console.log("This message is displayed while waiting for async operation to complete, you can do any compute here...");
+
+/**************************************************************************************************************************************************** */
