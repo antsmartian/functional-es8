@@ -103,7 +103,6 @@ generator.next()
 
 
 function httpGetAsync(url,callback) {
-
     return https.get(url, 
         function(response) {
             var body = '';
@@ -141,7 +140,7 @@ generator = main()
 generator.next()
 
 /**************************************************************************************************************************************************** */
-Promise Examples
+//Promise Examples
 let grade = "A+";
 let examResults = new Promise(
     function (resolve, reject) {
