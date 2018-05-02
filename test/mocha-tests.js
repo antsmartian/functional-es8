@@ -79,4 +79,7 @@ describe("simple fake", function () {
         getAsyncMock.verify();
         getAsyncMock.restore();
     });
+    it("HTTP Call", function () {
+        httpLibrary.getAsyncCaller("https://jsonplaceholder.typicode.com/users");
+    });
 });
