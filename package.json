@@ -4,11 +4,30 @@
   "description": "Functional lib and examples in ES6",
   "main": "index.js",
   "scripts": {
-    "playground" : "babel-node functional-playground/play.js --presets es2015-node5"
+    "playground": "babel-node functional-playground/play.js --presets es2017-node7",
+    "mochatests": "mocha --require babel-core/register",
+    "jasminetests": "jasmine"
   },
   "author": "Anto Aravinth <anto.aravinth.cse@gmail.com>",
   "license": "ISC",
   "devDependencies": {
-    "babel-preset-es2015-node5": "^1.2.0"
+    "babel-cli": "^6.23.0",
+    "babel-core": "^6.18.0",
+    "babel-polyfill": "6.26.0",
+    "babel-preset-es2017-node7": "^0.5.2",
+    "babel-preset-latest": "^6.16.0",
+    "babel-preset-stage-3": "^6.17.0",
+    "babel-register": "^6.26.0",
+    "jasmine": "3.1.0",
+    "mocha": "5.1.1"
+  },
+  "dependencies": {
+    "jasmine-node": "^1.14.5"
+  },
+  "babel": {
+    "presets": [
+      "stage-3",
+      "latest"
+    ]
   }
 }
