@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "playground": "babel-node functional-playground/play.js --presets es2017-node7",
-    "mochatests": "mocha --require babel-core/register",
+    "mochatests": "ocha --compilers js:babel-core/register --require babel-polyfill",
+    "mochatests-codecoverage": "nyc mocha --compilers js:babel-core/register --require babel-polyfill",
     "jasminetests": "jasmine"
   },
   "author": "Anto Aravinth <anto.aravinth.cse@gmail.com>",
@@ -19,7 +20,9 @@
     "babel-preset-stage-3": "^6.17.0",
     "babel-register": "^6.26.0",
     "jasmine": "3.1.0",
-    "mocha": "5.1.1"
+    "mocha": "5.1.1",
+    "node-fetch": "2.1.2",
+    "sinon": "^5.0.3"
   },
   "dependencies": {
     "jasmine-node": "^1.14.5"

@@ -1,12 +1,8 @@
-import {
-    forEach,
-    Sum,
-    fetchTextByPromise
-} from "../lib/es6-functional.js";
+import { forEach, Sum, fetchTextByPromise, httpGetAsync, httpLibrary } from "../lib/es6-functional.js";
 import 'babel-polyfill';
-import {
-    resolve
-} from "path";
+import { resolve } from "path";
+import { EAFNOSUPPORT } from "constants";
+const sinon = require("sinon")
 
 /*********************************************************************************************************** */
 var assert = require('assert');
@@ -41,7 +37,7 @@ describe('es6-functional', function () {
         });
     });
 
-/***TESTING FUNCTIONAL JS CODE******************************************************************************************************** */
+    /***TESTING FUNCTIONAL JS CODE******************************************************************************************************** */
 
     describe('Promise/Async', function () {
         it('Promise should return es8', async function (done) {
@@ -53,3 +49,34 @@ describe('es6-functional', function () {
 });
 
 /***MOCKING******************************************************************************************************** */
+
+var testObject= {};
+
+testObject.doSomethingTo10 = (func) => {
+    const x = 10;
+    return func(x);
+}
+
+testObject.tenTimes = (x) => 10 * x;
+
+describe("simple fake", function () {
+    it("doSomethingTo10", function () {
+        const fakeFunction = sinon.fake();
+        testObject.doSomethingTo10(fakeFunction);
+        assert.equal(fakeFunction.called, true);
+    });
+    it("10 Times", function () {
+        const fakeFunction = sinon.stub(testObject, "doSomethingTo10");
+        fakeFunction.withArgs(10).returns(10);
+        var result = testObject.tenTimes(0);
+        assert.equal(result, 0);
+        assert.notEqual(result, 10);
+    });
+    it("Mock HTTP Call", function () {
+        const getAsyncMock = sinon.mock(httpLibrary);
+        getAsyncMock.expects("httpGetAsync").once().returns({ username : "sriks"});
+        httpLibrary.getAsyncCaller("", (usernames) => console.log("Usernames: " + usernames));
+        getAsyncMock.verify();
+        getAsyncMock.restore();
+    });
+});
