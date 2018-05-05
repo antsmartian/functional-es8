@@ -1,7 +1,5 @@
 import { forEach, Sum, fetchTextByPromise, httpGetAsync, httpLibrary } from "../lib/es6-functional.js";
 import 'babel-polyfill';
-import { resolve } from "path";
-import { EAFNOSUPPORT } from "constants";
 const sinon = require("sinon")
 
 /*********************************************************************************************************** */
@@ -50,7 +48,7 @@ describe('es6-functional', function () {
 
 /***MOCKING******************************************************************************************************** */
 
-var testObject= {};
+var testObject = {};
 
 testObject.doSomethingTo10 = (func) => {
     const x = 10;
@@ -74,8 +72,8 @@ describe("simple fake", function () {
     });
     it("Mock HTTP Call", function () {
         const getAsyncMock = sinon.mock(httpLibrary);
-        getAsyncMock.expects("httpGetAsync").once().returns({ username : "sriks"});
-        httpLibrary.getAsyncCaller("", (usernames) => console.log("Usernames: " + usernames));
+        getAsyncMock.expects("httpGetAsync").once().returns(null);
+        httpLibrary.getAsyncCaller("", (usernames) => console.log(usernames));
         getAsyncMock.verify();
         getAsyncMock.restore();
     });
