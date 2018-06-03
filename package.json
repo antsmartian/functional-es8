@@ -9,7 +9,7 @@
     "mocha-cc": "nyc mocha --compilers js:babel-core/register --require babel-polyfill",
     "jasmine": "jasmine"
   },
-  "author": "Anto Aravinth <anto.aravinth.cse@gmail.com>",
+  "author": "Srikanth Machiraju <vishwanath.srikanth@gmail.com>",
   "license": "ISC",
   "devDependencies": {
     "babel-cli": "^6.23.0",
