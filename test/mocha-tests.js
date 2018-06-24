@@ -1,6 +1,25 @@
-import { forEach, Sum, fetchTextByPromise, httpGetAsync, httpLibrary } from "../lib/es6-functional.js";
+import {
+    forEach,
+    Sum,
+    fetchTextByPromise,
+    httpGetAsync,
+    httpLibrary
+} from "../lib/es6-functional.js";
+import {
+    loadRedux,
+    createStore,
+    incrementCounter,
+    reducer,
+    render,
+    initialState,
+    store
+} from "../lib/redux.js"
 import 'babel-polyfill';
 const sinon = require("sinon")
+import {
+    jsdom
+} from 'jsdom';
+import { listenerCount } from "cluster";
 
 /*********************************************************************************************************** */
 var assert = require('assert');
@@ -64,11 +83,11 @@ describe("simple fake", function () {
         assert.equal(fakeFunction.called, true);
     });
     it("10 Times", function () {
-        const fakeFunction = sinon.stub(testObject, "doSomethingTo10");
+        const fakeFunction = sinon.stub(testObject, "tenTimes");
         fakeFunction.withArgs(10).returns(10);
-        var result = testObject.tenTimes(0);
-        assert.equal(result, 0);
-        assert.notEqual(result, 10);
+        var result = testObject.tenTimes(10);
+        assert.equal(result, 10);
+        assert.notEqual(result, 0);
     });
     it("Mock HTTP Call", function () {
         const getAsyncMock = sinon.mock(httpLibrary);
@@ -79,5 +98,43 @@ describe("simple fake", function () {
     });
     it("HTTP Call", function () {
         httpLibrary.getAsyncCaller("https://jsonplaceholder.typicode.com/users");
+    });
+});
+
+/*******Testing Redux library *********************************************************************************************************** */
+
+describe('reduxtests', () => {
+    // test if state is empty initially
+    it('is empty initially', () => {
+        assert.equal(store.getState().counter, 0);
+    });
+
+    // test for state change once
+    it('state change once', () => {
+        global.document = null;
+        incrementCounter();
+        assert.equal(store.getState().counter, 1);
+    });
+
+    // test for state change twice
+    it('state change twice', () => {
+        global.document = null;
+        incrementCounter();
+        assert.equal(store.getState().counter, 2);
+    });
+
+    // test for listener count
+    it('minimum 1 listener', () => {
+        //Arrange
+        global.document = null;
+        store.subscribe(function () {
+            console.log(store.getState());
+        });
+
+        //Act
+        var hasMinOnelistener = store.currentListeners.length > 1;
+        
+        //Assert
+        assert.equal(hasMinOnelistener, true);
     });
 });

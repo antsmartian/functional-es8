@@ -24,7 +24,8 @@
     "jasmine": "3.1.0",
     "mocha": "5.1.1",
     "node-fetch": "2.1.2",
-    "sinon": "^5.0.3"
+    "sinon": "^5.0.3",
+    "jsdom": "11.11.0"
   },
   "dependencies": {
     "jasmine-node": "^1.14.5"
