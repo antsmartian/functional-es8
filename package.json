@@ -4,11 +4,36 @@
   "description": "Functional lib and examples in ES6",
   "main": "index.js",
   "scripts": {
-    "playground" : "babel-node functional-playground/play.js --presets es2015-node5"
+    "playground": "babel-node functional-playground/play.js --presets es2017-node7",
+    "mocha": "mocha --compilers js:babel-core/register --require babel-polyfill",
+    "mocha-cc": "nyc mocha --compilers js:babel-core/register --require babel-polyfill",
+    "jasmine": "jasmine"
   },
-  "author": "Anto Aravinth <anto.aravinth.cse@gmail.com>",
+  "author": "Srikanth Machiraju <vishwanath.srikanth@gmail.com>",
   "license": "ISC",
   "devDependencies": {
-    "babel-preset-es2015-node5": "^1.2.0"
+    "babel-cli": "^6.23.0",
+    "babel-core": "^6.18.0",
+    "babel-polyfill": "6.26.0",
+    "babel-preset-es2017-node7": "^0.5.2",
+    "babel-preset-latest": "^6.16.0",
+    "babel-preset-stage-3": "^6.17.0",
+    "babel-register": "^6.26.0",
+    "eslint": "^4.19.1",
+    "eslint-config-google": "^0.9.1",
+    "jasmine": "3.1.0",
+    "mocha": "5.1.1",
+    "node-fetch": "2.1.2",
+    "sinon": "^5.0.3",
+    "jsdom": "11.11.0"
+  },
+  "dependencies": {
+    "jasmine-node": "^1.14.5"
+  },
+  "babel": {
+    "presets": [
+      "stage-3",
+      "latest"
+    ]
   }
 }
