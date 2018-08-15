@@ -1,25 +1,23 @@
+/*******Imports *********************************************************************************************************** */
 import {
     forEach,
     Sum,
     fetchTextByPromise,
-    httpGetAsync,
     httpLibrary
 } from "../lib/es6-functional.js";
+
 import {
-    loadRedux,
-    createStore,
     incrementCounter,
-    reducer,
-    render,
-    initialState,
     store
-} from "../lib/redux.js"
+} from "../lib/redux.js";
+
 import 'babel-polyfill';
-const sinon = require("sinon")
-import {
-    jsdom
-} from 'jsdom';
-import { listenerCount } from "cluster";
+
+const sinon = require("sinon");
+
+import { curryN } from "../lib/currying.js";
+
+import { Container, MayBe, Some, Nothing, Either } from "../lib/functors.js";
 
 /*********************************************************************************************************** */
 var assert = require('assert');
@@ -101,7 +99,64 @@ describe("simple fake", function () {
     });
 });
 
+/*******Testing Currying, Monads and Functions *********************************************************************************************************** */
+
+describe("Currying Tests", () => {
+    it("should return a function", function(){
+        let add = function(){}
+        assert.equal(typeof curryN(add), 'function');
+    });
+
+    it("should throw if a function is not provided", function(){
+        assert.throws(curryN, Error);
+    });
+
+    it("calling curried function and original function with same arguments should return", function(){
+        let multiply = (x,y,z) => x * y * z;
+        
+        let curriedMultiply = curryN(multiply);
+        assert.equal(curriedMultiply(1,2,3), multiply(1,2,3));
+        assert.equal(curriedMultiply(1)(2)(3), multiply(1,2,3));
+        assert.equal(curriedMultiply(1)(2,3), multiply(1,2,3));
+
+        curriedMultiply = curryN(multiply)(2);
+        assert.equal(curriedMultiply(1,3), multiply(1,2,3));
+    });
+});
+
+describe("Functors Tests", () => {
+    it("should store the value", function(){
+        let testValue = new Container(3);
+        assert.equal(testValue.value, 3);
+    });
+
+    it("should implement of", function(){
+        let testValue = Container.of(3);
+        assert.equal(testValue.value, 3);
+    });
+
+    it("should implement map", function(){
+        let double = (x) => x + x;
+        let testValue = Container.of(3).map(double).map(double);
+        assert.equal(testValue.value, 12);
+    });
+
+    it("may be should handle null", function(){
+        let upperCase = (x) => x.toUpperCase();
+        let testValue = MayBe.of(null).map(upperCase);
+        assert.equal(testValue.value, null);
+    });
+
+    it("may be should chain", function(){
+        let upperCase = (x) => x.toUpperCase();
+        let testValue = MayBe.of("Chris").map(upperCase).map((x) => "Mr." + x);
+        assert.equal(testValue.value, "Mr.CHRIS");
+    });
+});
+
+
 /*******Testing Redux library *********************************************************************************************************** */
+
 
 describe('reduxtests', () => {
     // test if state is empty initially
