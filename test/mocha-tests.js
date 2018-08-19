@@ -111,7 +111,7 @@ describe("Currying Tests", () => {
         assert.throws(curryN, Error);
     });
 
-    it("calling curried function and original function with same arguments should return", function(){
+    it("calling curried function and original function with same arguments should return the same value", function(){
         let multiply = (x,y,z) => x * y * z;
         
         let curriedMultiply = curryN(multiply);
@@ -137,6 +137,7 @@ describe("Functors Tests", () => {
 
     it("should implement map", function(){
         let double = (x) => x + x;
+        assert.equal(typeof Container.of(3).map == 'function', true)
         let testValue = Container.of(3).map(double).map(double);
         assert.equal(testValue.value, 12);
     });
@@ -154,6 +155,33 @@ describe("Functors Tests", () => {
     });
 });
 
+describe("Monad Tests", () => {
+
+    it("should implement join", function(){
+        let mayBe = new MayBe(null);
+        let testValue = typeof mayBe.join === 'function' ;
+        assert.equal(testValue, true);
+    });
+
+    it("should implement chain", function(){
+        let mayBe = new MayBe(null);
+        let testValue = typeof mayBe.chain === 'function' ;
+        assert.equal(testValue, true);
+    });
+
+    it("join should remove nesting", function(){
+        let mayBe = new MayBe.of(MayBe.of(5));
+        let testValue = mayBe.join().map((v)=>v + 4);
+        assert.equal(testValue.value, 9);
+    });
+
+    it("calling chain should avoid using join after map", function(){
+        let mayBe = new MayBe.of(MayBe.of(5));
+        let testValue = mayBe.join().chain(v => v + 4);
+        assert.equal(testValue, 9);
+    });
+
+});
 
 /*******Testing Redux library *********************************************************************************************************** */
 
