@@ -9,7 +9,9 @@
   "author": "Anto Aravinth <anto.aravinth.cse@gmail.com>",
   "license": "ISC",
   "dependencies": {
-    "babel-preset-es2017-node7": "^0.5.2",
     "babel-cli": "^6.23.0"
+  },
+  "devDependencies": {
+    "babel-preset-es2017-node7": "^0.5.2"
   }
 }
